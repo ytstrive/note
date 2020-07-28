@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>resize</title>
+    <script type="text/javascript">
+      function resize() {
+        console.log('触发缩放浏览器窗口resize事件.');
+        return 11;
+      }
+      /**
+       *
+       * 防抖函数
+       * @param {Function} fn 执行函数
+       * @param {Number} wait 等待时间
+       * @param {Boolean} immediate 立即执行
+       * @returns Function
+       */
+      function debounce(fn, wait, immediate) {
+        var timerId = null;
+        var result;
+        //由于之前直接返回 return fn(时间处理函数),没有添加定时器所以会高频率的触发事件处理函数.
+        //这里return 返回匿名函数供onresize事件触发,虽然该匿名函数同样会被高频率的触发,但匿名函数内使用了定时器,降低了fn事件处理函数的频率,不信？你执行一下.
+        return function () {
+          var that = this;
+          var args = arguments;
+          if (timerId !== null) {
+            clearTimeout(timerId); //取消之前创建的定时器
+          }
+
+          if (immediate) {
+            if (timerId === null) {
+              //立即执行
+              result = fn.apply(that, args);
+            }
+            //上面立即执行事件处理函数之后,创建定时器到时间设置timerId=null,
+            //以保证wait期间内不断触发事件也不会执行,如果不这样设置上面的if无法判断timerId的状态会持续触发
+            timerId = setTimeout(function () {
+              timerId = null;
+            }, wait);
+          } else {
+            timerId = setTimeout(function(){
+              //这里即使通过result接收返回值,外部也无法接收到(原因同debounce 之 underscore 篇提到的一样)
+              result = fn.apply(that, args);
+            }, wait); //设置此次定时器
+          }
+          return result;
+        };
+      }
+      //这里强调一下window.onresize接收的是一个可执行函数.因为每次触发resize事件都需要调用可执行函数,所以执行debounce()函数返回值是一个可执行函数.
+      window.onresize = debounce(resize, 3000, false);
+    </script>
+  </head>
+  <body>
+    <p>改变浏览器窗口的大小触发resize事件.</p>
+  </body>
+</html>
