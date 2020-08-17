@@ -11,7 +11,6 @@
   - throttle 之 underscore 篇
   - throttle 之 lodash 篇
 - 完善
-- 问答
 - 总结
 
 ### 概念
