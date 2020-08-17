@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>mousemove</title>
+    <style type="text/css">
+      #main {
+        width: 400px;
+        height: 200px;
+        margin: 0 auto;
+        line-height: 200px;
+        text-align: center;
+        color: #fff;
+        background-color: #31a6bb;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="main">0</div>
+    <script type="text/javascript">
+      var count = 0;
+      var mainDom = document.getElementById('main');
+
+      function mousemove() {
+        mainDom.innerHTML = ++count;
+        console.log('触发mousemove事件.');
+        return Math.random()
+      }
+      /**
+       *
+       * 节流函数
+       * @param {Function} fn 执行函数
+       * @param {Number} wait 等待时间
+       * @param {Object} options 选项配置{leading:true,trailing:true}
+       * @returns Function 可执行函数
+       */
+      function throttle(fn, wait, options) {
+        var timerId = null; //标记是否创建定时器
+        var result;
+        var previous = 0;
+        if (!options) {
+          options = { leading: true, trailing: true };
+        }
+
+        return function () {
+          var that = this;
+          var args = arguments;
+          var _now = new Date().getTime();
+          var remaining = wait - (_now - previous);
+          //计算时间差、配置leading:true 开启首次触发事件立即执行函数
+          if (
+            (remaining <= 0 || remaining > wait) &&
+            options.leading !== false
+          ) {
+            if (timerId) {
+              clearTimeout(timerId);
+              timerId = null;
+            }
+            //上面使用clearTimeout是为了保证在下面立即执行的fn函数之前不在有之前创建的定时器去执行fn方法,(防止定时器执行+立即执行导致同一时间多次执行的问题)
+            previous = _now;
+            result = fn.apply(that, args);
+          }
+          //如果未创建则进入`if`创建定时器,这样便控制了定时器的创建次数(匿名函数每次都会触发,但匿名函数内的定时器不在像之前被频繁创建而是根据timerId判断是否存在再创建)
+          if (!timerId && options.trailing !== false) {
+            //记录创建的定时器
+            timerId = setTimeout(function () {
+              //为什么timerId要放在setTimeout内重置为null?
+              //由于if根据timerId判断是否创建定时器,从而控制定时器的创建次数以便实现真正的节流
+              //简答讲只有本次定时器执行了,才可以timerId = null创建下一次的定时器...以此...类推...
+              timerId = null;
+              previous = new Date().getTime();//记录最近一次触发fn事件的时间
+              result = fn.apply(that, args); //到时间执行事件处理函数
+            }, wait);
+          }
+          return result;
+        };
+      }
+      mainDom.addEventListener('mousemove', throttle(mousemove, 1000,{trailing:false}));
+    </script>
+  </body>
+</html>

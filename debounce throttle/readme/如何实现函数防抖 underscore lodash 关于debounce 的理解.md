@@ -99,7 +99,7 @@
        * 防抖函数
        * @param {Function} fn 执行函数
        * @param {Number} wait 等待时间
-       * @returns Function
+       * @returns Function 可执行函数
        */
       function debounce(fn, wait) {
         return fn;
@@ -129,7 +129,7 @@
        * 防抖函数
        * @param {Function} fn 执行函数
        * @param {Number} wait 等待时间
-       * @returns Function
+       * @returns Function 可执行函数
        */
       function debounce(fn, wait) {
         //由于之前直接返回 return fn(时间处理函数),没有添加定时器所以会高频率的触发事件处理函数.
@@ -168,7 +168,7 @@
        * 防抖函数
        * @param {Function} fn 执行函数
        * @param {Number} wait 等待时间
-       * @returns Function
+       * @returns Function 可执行函数
        */
       function debounce(fn, wait) {
         var timerId = null;
@@ -300,7 +300,7 @@ function debounce(func, wait, options) {
     lastInvokeTime = 0, //最后一次执行事件处理函数的时间(毫秒数)
     leading = false, //首次触发事件则立即执行事件处理函数
     maxing = false, // 是否开启,根据该参数其实就是判断了是否开始节流模式
-    trailing = true; //最后一次触发事件后,等到时间执行事件处理函数
+    trailing = true; //触发事件结束后,等到时间执行事件处理函数
 
   if (typeof func != 'function') {
     throw new TypeError(FUNC_ERROR_TEXT);
@@ -335,7 +335,7 @@ function debounce(func, wait, options) {
    * 但它还创建了一个定时器,为什么要做两件事情(1.判断是否立即执行事件函数;2.创建定时器)???
    * 做第一件事情是它的本分应该做的,第二件事情创建定时器是为了后续的操作铺路
    * 别忘了防抖函数debounce第三个参数是可以配置{leading:true,trailing:true}两个参数都为true的情况存在
-   * 即leading:true首次触发事件立即执行事件处理函数,同时trailing:true最后一次触发事件后执行事件处理函数
+   * 即leading:true首次触发事件立即执行事件处理函数,同时trailing:true触发事件结束后执行事件处理函数
    * 所以这里创建定时器是为后面的trailing:true的情况做准备.
    * 为什么会出现允许都为true的情况,可以看文章结尾问答部分第一问题
    * @param {Number} time 调用时间(毫秒数)
@@ -407,8 +407,8 @@ function debounce(func, wait, options) {
   }
   /**
    *
-   * 判断最后一次触发事件后是否需要调用invokeFunc函数(立即执行事件处理函数)
-   * 默认trailing:true 采用最后一次触发事件后执行事件处理函数
+   * 判断触发事件结束后是否需要调用invokeFunc函数(立即执行事件处理函数)
+   * 默认trailing:true 采用触发事件结束后执行事件处理函数
    * @param {Number} time 调用时间(毫秒数)
    * @returns
    */
@@ -499,7 +499,7 @@ function debounce(func, wait, options) {
        * @param {Function} fn 执行函数
        * @param {Number} wait 等待时间
        * @param {Boolean} immediate 立即执行
-       * @returns Function
+       * @returns Function 可执行函数
        */
       function debounce(fn, wait, immediate) {
         var timerId = null;
@@ -561,4 +561,4 @@ underscore 把防抖、节流分为 2 个独立的函数各司其职,而 lodash 
 
 ### 总结
 
-以上就是对如何实现函数防抖 underscore lodash 关于 debounce 解析的理解,还望多多指教.
+以上就是对如何实现函数防抖 underscore lodash 关于 debounce 的理解,还望多多指教.
