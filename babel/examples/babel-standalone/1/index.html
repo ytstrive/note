@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>babel-standalone es6 转码</title>
+    <script src="https://unpkg.com/@babel/standalone@7.12.9/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="output"></div>
+    <script type="text/babel">
+      const getMsg = () => {
+        const name = 'Babel';
+        document.getElementById(
+          'output'
+        ).innerHTML = `Hello ${name} version:${Babel.version}`;
+      };
+      getMsg();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>babel-standalone import、export 的使用</title>
+    <script src="https://unpkg.com/@babel/standalone@7.12.9/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="output"></div>
+    <script
+      type="text/babel"
+      data-plugins="transform-modules-umd"
+      data-module="userInfo"
+    >
+      export default {
+        name: '小朋友',
+        age: 18,
+      };
+    </script>
+    <script type="text/babel" data-plugins="transform-modules-umd">
+      import userInfo from 'userInfo';
+      document.getElementById('output').innerHTML = `Hello ${userInfo.name}`;
+    </script>
+  </body>
+</html>
