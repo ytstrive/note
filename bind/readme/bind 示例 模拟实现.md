@@ -695,11 +695,13 @@ console.log(obj.say()); //手机品牌:华为
 
 > `call` `apply` `bind` 方法对比
 
-| 方法名 | 参数                                                            | 执行                |
+<!-- | 方法名 | 参数                                                            | 执行                |
 | ------ | --------------------------------------------------------------- | ------------------- |
 | call   | 接收多个参数(第一个参数改变 `this` 指向,其它参数为参数列表) | 立即执行            |
 | apply  | 接收 2 个参数(第一个参数改变 `this` 指向,第二个参数为数组类型)  | 立即执行            |
-| bind   | 同 call                                                         | 创建新函数,手动调用 |
+| bind   | 同 call                                                         | 创建新函数,手动调用 | -->
+
+![bind-1](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2d961e13c3e246deb94b0105e00f15f3~tplv-k3u1fbpfcp-watermark.image)
 
 > 模拟实现 bind2 方法内为`if(that.prototype)`为什么不放在`bindFn`函数的`if(this instanceof bindFn)`内
 

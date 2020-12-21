@@ -14,6 +14,7 @@
 #### 定义
 
 **new 运算符创建一个用户定义的对象类型的实例或具有构造函数的内置对象的实例.**
+
 定义、语法、更多示例参考 MDN:<https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new>
 
 在定义中提到了以下两点:
@@ -242,6 +243,7 @@ console.log(huawei instanceof Phone); //true
 ```
 
 步骤 2 就这样解决了(看来之前对字面理解有误...),关于步骤 3 改变`this`指向则直接使用了`apply`方法.
+
 之前写过关于**call apply 示例 模拟实现 性能**的文章感兴趣可以看一下<https://juejin.im/post/5eddb2c86fb9a047b11b5c67>
 
 关于步骤 4**如果该函数没有返回对象，则返回 this** 可能啰嗦的比较多一点(没看错关于一个返回值竟然要啰嗦 N 多),还是先通过示例看原生`new`是怎么处理返回值.

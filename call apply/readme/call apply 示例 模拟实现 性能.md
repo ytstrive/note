@@ -24,6 +24,7 @@
 #### 定义
 
 **call() 方法使用一个指定的 this 值和单独给出的一个或多个参数来调用一个函数.**
+
 定义、语法、更多示例参考 MDN:<https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/call>
 
 我们结合下面的示例来解释定义中提到的以下两点指的是什么.
@@ -703,6 +704,7 @@ Function.prototype.call2 = function () {
 #### 定义
 
 **apply() 方法调用一个具有给定 this 值的函数，以及作为一个数组（或类似数组对象）提供的参数.**
+
 定义、语法、更多示例参考 MDN:<https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/apply>
 
 示例之前我们还是先看一下`apply`方法能否实现`call`方法的效果.

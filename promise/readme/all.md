@@ -70,6 +70,7 @@ function Enumerator(Constructor, input) {
 返回的`promise`吗？没错就是这个`this.promise`,这样外部就可以通过这个`promsie`对象链式调用`then`等方法了.
 
 `if (isArray(input))else`还是对参数下手了...印证了上面我们说的第 1 点,首先看`else`内对非数组做了什么处理?调用`reject`函数改变当前`promsie`的状态为`Rejected`到此就结束了.还是看`if`吧
+
 感觉需要罗列一下
 
 - `this.length`记录`promise`数组长度
@@ -154,6 +155,7 @@ if (_then === then && entry._state !== PENDING) {
 ```
 
 对于`if`判断还是比较好理解的,判断循环迭代的每个`promise`对象的`then`方法与源码中的`then`函数相等并且迭代的`promise`对象的状态已经发生了变化(不再是初始化的`Pending`状态),想想本节开头的示例是不是就是这种情况.所以直接调用`_settledAt`方法处理状态变化之后的事情,既然已经提到`_settledAt`方法,我们看这方法做了哪些后面不再单独介绍`_settledAt`方法.
+
 **简单一句话`if`处理状态为`Fulfilled`或`Rejected`的操作**
 
 ```javascript
@@ -184,6 +186,7 @@ Enumerator.prototype._settledAt = function _settledAt(state, i, value) {
 - value 循环迭代的`promise`对象传递的值
 
 `if (promise._state === PENDING)`只有在父`promse`的状态为`Pending`的情况才可以执行其它操作,从而再一次证明之前在状态变化一节提到的
+
 **状态只会是从 `Pending->Fulfilled`或`Pending->Rejected`改变一次且不可逆.**
 
 `this._remaining--`对剩余未执行的`promise`对象数量递减-1,接下来的`if (state === REJECTED)`是重点,这里判断是`REJECTED`状态的话要立刻调用`reject(promise, value)`函数为什么要这样操作?
@@ -269,11 +272,13 @@ ES6Promise.all(promises).then(
 讲完了`if`还是继续看`else if (typeof _then !== 'function')`对于有这种`entry.then`有`then`但检测类型不是`function`的情况做处理也比较简单`this._remaining--`对剩余未执行的`promise`对象数量递减-1 并且`this._result[i] = entry`在结果集中对应的索引位置存入值(这个值就是对象本身).
 
 `else if (c === Promise$1)`这个判断的存在又有什么意义呢?
+
 前面的`if (_then === then && entry._state !== PENDING)` `else if (typeof _then !== 'function')`都是针对循环迭代的`promise`对象做操作,(`c`的值是通过`new Enumerator(Constructor,input)`创建对象时外部传入的所以不确定`c`是否与源码内的`Promise$1`是同一个函数)而这里一旦验证`c`与源码内的`Promise$1`为同一个函数,可以直接使用`handleMaybeThenable`函数方便做剩下的操作.
 
 `else`直接调用`resolve$$1`方法创建一个状态为`Fulfilled`的`promise`对象,调用`_willSettleAt`方法存入订阅队列.
 
 最后我们补充一点:
+
 上面看到在多个判断条件内调用了`_willSettleAt`方法,为什么这个方法会引起重视呢,又或者知道循环迭代`promise`对象状态是`Fulfilled`或`Rejected`的话会调用`_settledAt`方法做处理(包含通知父`promsie`是否需要更改状态).(上面对该方法已做过解析),刚才在`else if (c === Promise$1)`也讲过`Pending`状态的处理,但处理之后怎么通知父`promise`呢？所以我们还是带着问题解析`_willSettleAt`方法看是否能得到答案.
 
 ```javascript

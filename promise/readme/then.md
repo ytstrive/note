@@ -35,6 +35,7 @@ function then(onFulfillment, onRejection) {
 - `onRejection`函数处理`Rejected`状态之后的事情.
 
 了解了两个参数之后,我们看传入的两个参数(回调函数什么时候触发).源码里首先对状态进行了判断`if(_state)...else`,为什么会对状态进行判断,难道不是直接调用`onFulfillment`或`onRejection`函数就可以了.
+
 上面对两个`onFulfillment` `onRejection`函数进行了描述(状态发生变化之后调用对应的函数),如果状态是`Pending`进入`then`方法该如何处理这种情况的存在(这就是为什么存在`if...else`).
 
 ```javascript
@@ -177,6 +178,7 @@ function onRejection(error) {
 ```
 
 以上示例模拟了`arguments`的使用.(或自行检索使用方法)
+
 到目前为止,`then`创建了`promise`新对象,通过`arguments`获取到当前状态对应的回调函数,接下来是否会立即触发回调函数我们继续看源码.
 
 ```javascript
@@ -224,8 +226,11 @@ if (isNode) {
 ```
 
 **asap ＝ as soon as possible 越快越好**
+
 **invokeCallback= 调用回调**
+
 看到这些函数名距离....调用...回调函数..不远了所以细品,细细品接下来的处理流程.
+
 **首先看`asap`函数做了什么.**
 
 - 函数接收两个参数
@@ -254,6 +259,7 @@ function useMutationObserver() {
 ```
 
 `BrowserMutationObserver`使用参考 <https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver>
+
 **`useMutationObserver`函数做了什么.**
 
 - 初始化对象的`new BrowserMutationObserver(flush)`的`flush`参数和`asap`函数内调用`customSchedulerFn(flush)`函数传入的`flush`是一样的.(无论是开发者实现`customSchedulerFn`函数还是按计划调用的`scheduleFlush`函数最后一步都是调用`flush`函数).
@@ -390,8 +396,6 @@ new ES6Promise((resolve, reject) => {
   - 3.2 判断当前状态为`Fulfilled`,立刻调用`asap`方法将回调方法存入队列,等待立刻执行.
 - 4.`then`方法返回新(子)`promise`对象
 
-<center><font>-----------我---是---分---割---线-----------</font></center>
-
 > 示例二 演示订阅队列的过程(初始化对象,8 秒后改变状态)
 
 ```javascript
@@ -423,8 +427,6 @@ new ES6Promise((resolve, reject) => {
 - 3.`setTimeout`触发`resolve`函数
   - 3.1`resolve`源码内改变状态,触发发布`publish`函数
 - 4.`then`方法返回新(子)`promise`对象
-
-<center><font>-----------我---是---分---割---线-----------</font></center>
 
 > 示例三 演示订阅队列的过程(订阅队列存在多个回调函数的情况)
 
@@ -466,10 +468,11 @@ new ES6Promise((resolve, reject) => {
 
 图示:
 
-| 1.立刻执行队列 | 2.订阅队列  |
+<!-- | 1.立刻执行队列 | 2.订阅队列  |
 | -------------- | ----------- |
 |                | 第一个 then |
-|                | 第二个 then |
+|                | 第二个 then | -->
+![then-1](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a12e84650c2547a9834803518441446f~tplv-k3u1fbpfcp-watermark.image)
 
 **这种链式调用,可以理解为当前`.then()`方法是由上一个`.then()`方法返回的新(子)`promise`对象调的)**
 
@@ -521,11 +524,11 @@ new ES6Promise((resolve, reject) => {
 
 图示:
 
-| 1.立刻执行队列 | 2.订阅队列  |
+<!-- | 1.立刻执行队列 | 2.订阅队列  |
 | -------------- | ----------- |
-| 第一个 then    | 第二个 then |
+| 第一个 then    | 第二个 then | -->
 
-<center><font>-----------我---是---分---割---线-----------</font></center>
+![then-2](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/82d3c33fa7fe4efa929d1e9338393fa7~tplv-k3u1fbpfcp-watermark.image)
 
 > 示例五 演示多个立刻执行队列、订阅队列的过程
 
@@ -622,17 +625,17 @@ new ES6Promise((resolve, reject) => {
 
 图示:
 
-| 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列 |
+<!-- | 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列 |
 | ---------- | ---------------------------------- | ---------- |
 | init.1     | then1.1(执行回调函数时输出 init.2) | then1.2    |
 | init.3     | then3.1                            | then3.2    |
 |            |                                    | then2.1    |
-|            |                                    | then2.2    |
+|            |                                    | then2.2    | -->
+
+![then-3](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5c380107777b449380113e2cb9b06c2c~tplv-k3u1fbpfcp-watermark.image)
 
 按照图示最终输出结果:
 **`init.1->init.3->then1.1->init.2->then3.1->then1.2->then3.2->then2.1->then2.2`**
-
-<center><font>-----------我---是---分---割---线-----------</font></center>
 
 > 示例六 演示返回值是`promise`对象(看是否会改变执行顺序)
 
@@ -712,14 +715,16 @@ new ES6Promise((resolve, reject) => {
 
 图示:
 
-| 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列  |
+<!-- | 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列  |
 | ---------- | ---------------------------------- | ----------- |
 | init.1     | then1.1(执行回调函数时输出 init.2) | ~~then1.2~~ |
 |            |                                    | then2.1     |
-|            |                                    | then2.2     |
+|            |                                    | then2.2     | -->
 
-按照之前的示例过程解析上面的图示应该是没错的输入结果应该是~~**`init.1->then1.1->init.2->then1.2->then2.1->then2.2`**~~
-但是我们测试之后发现正确的结果却是这样的:**`init.1->then1.1->init.2->then2.1->then2.2->then1.2`**是什么原因导致出现这种问题?
+![then-4](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/c9c33d12d1d747babceb79e2a95df5ce~tplv-k3u1fbpfcp-watermark.image)
+
+按照之前的示例过程解析上面的图示应该是没错的输入结果应该是`init.1->then1.1->init.2->then1.2->then2.1->then2.2`
+但是我们测试之后发现正确的结果却是这样的:`init.1->then1.1->init.2->then2.1->then2.2->then1.2`是什么原因导致出现这种问题?
 既然多了一个`return`返回`promise`对象,那我们就从返回值开始
 在`then`方法的回调函数里可以返回任何值(基本数据类型、引用(复合)数据类型),那源码内部是如何区别处理呢?
 还是对源码进行一步一步分析吧,没有其它捷径...
@@ -754,8 +759,6 @@ function selfFulfillment() {
   - `then$$1 = value.then;`由于上面已经判断`value`是对象或函数,所以此处默认它具有`then`属性或方法
   - 调用`handleMaybeThenable`函数做进一步处理
 - `else`返回值是基本数据类型则直接调用`fulfill`函数改变状态
-
-<center><font>-----------我---是---分---割---线-----------</font></center>
 
 ```javascript
 //源码
@@ -816,8 +819,6 @@ new ES6Promise((resolve, reject) => {
 
 因为`Pro`虽然有静态方法`then`但返回值是通过`new`创建的一个`Pro`对象,而对象上并没有`then`方法,所以源码`resolve`函数内`then$$1 = value.then`为`undefined`.
 
-<center><font>-----------我---是---分---割---线-----------</font></center>
-
 ```javascript
 //源码
 function handleOwnThenable(promise, thenable) {
@@ -850,18 +851,21 @@ function handleOwnThenable(promise, thenable) {
 
 所以示例六的正确图示如下:
 
-| 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列 |
+<!-- | 0.同步方法 | 1.立刻执行队列                     | 2.订阅队列 |
 | ---------- | ---------------------------------- | ---------- |
 | init.1     | then1.1(执行回调函数时输出 init.2) | then2.1    |
 |            |                                    | then2.2    |
-|            |                                    | then1.2    |
+|            |                                    | then1.2    | -->
+
+![then-5](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/807ad418fe124d958ace1c2a709ac076~tplv-k3u1fbpfcp-watermark.image)
 
 重要的事情说三遍
-**只要返回值是`promise`对象,则调用`handleOwnThenable`函数,之前的队列会在返回值`promise`对象的`then`方法之后执行**
-**只要返回值是`promise`对象,则调用`handleOwnThenable`函数,之前的队列会在返回值`promise`对象的`then`方法之后执行**
+
 **只要返回值是`promise`对象,则调用`handleOwnThenable`函数,之前的队列会在返回值`promise`对象的`then`方法之后执行**
 
-<center><font>-----------我---是---分---割---线-----------</font></center>
+**只要返回值是`promise`对象,则调用`handleOwnThenable`函数,之前的队列会在返回值`promise`对象的`then`方法之后执行**
+
+**只要返回值是`promise`对象,则调用`handleOwnThenable`函数,之前的队列会在返回值`promise`对象的`then`方法之后执行**
 
 ```javascript
 //源码
@@ -913,11 +917,12 @@ function tryThen(then$$1, value, fulfillmentHandler, rejectionHandler) {
 - 首先看到`asap`函数应该立刻明白源码把这种`thenable`的情况作为像`promise`的`then`方法一样进行处理了.
 
 重要的事情说三遍
-**对于这种`thenable`源码会作为像`then`一样处理**
-**对于这种`thenable`源码会作为像`then`一样处理**
+
 **对于这种`thenable`源码会作为像`then`一样处理**
 
-<center><font>-----------我---是---分---割---线-----------</font></center>
+**对于这种`thenable`源码会作为像`then`一样处理**
+
+**对于这种`thenable`源码会作为像`then`一样处理**
 
 #### 问答
 
@@ -1034,6 +1039,7 @@ new ES6Promise((resolve, reject) => {
 ```
 
 这个问题上面示例六已经已经从源码分析的角度知道了答案,这次我们结合上面的示例(和示例六类似)从结果倒推,因为我们知道`then`方法是异步执行的(什么时候执行取决于状态的变化)所以遇到返回值是`promise`对象的情况(如上面示例`then1.1`函数返回值是`promise`对象),返回对象的链式调用`then`方法还没执行完毕,就开始调用`then1.2`的函数那方法怎么能接收到返回值呢(如上面示例 `then2.2`函数如果在`then1.2`回调函数之后执行,那么`then1.2`永远接收不到`then2.2`函数的返回值).
+
 **所以简单的理解先执行返回对象的链式`then`方法,就是为了确保其它`then`可以获取到正确的返回值**
 
 关于`then`一节啰嗦的比较多所以还需要品.细品.细细品.
