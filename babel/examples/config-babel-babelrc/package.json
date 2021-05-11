@@ -1,0 +1,12 @@
+{
+  "name": "config-babel-babelrc",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.22.0"
+  },
+  "scripts": {
+    "babel": "babel script.js",
+    "babel-compiled": "babel script.js  --out-file script-compiled.js",
+    "utils": "babel ./utils/index.js"
+  }
+}

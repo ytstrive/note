@@ -1,0 +1,11 @@
+{
+  "name": "cli",
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
+  },
+  "scripts": {
+    "babel": "babel script.js",
+    "babel-compiled": "babel script.js --out-file script-compiled.js",
+    "utils": "babel ./utils/index.js"
+  }
+}

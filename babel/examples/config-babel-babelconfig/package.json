@@ -1,0 +1,13 @@
+{
+  "name": "config-babel-babelconfig",
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-arrow-functions": "^7.12.1"
+  },
+  "scripts": {
+    "babel": "babel script.js",
+    "babel-compiled": "babel script.js --out-file script-compiled.js",
+    "utils": "babel ./utils/index.js"
+  }
+}
